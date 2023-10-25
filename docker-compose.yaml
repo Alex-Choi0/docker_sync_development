@@ -1,0 +1,26 @@
+version: '3'
+# ./docker-compose.yaml
+# services에서는 여러개의 컨테이너를 생성할수 있습니다.
+services:
+  backend:
+    # 이미지 생성을 위해 해당 디렉토리에 있는 Dockerfile를 build한다.
+    # docker-compose파일에 같은경로로 Dockerfile이 있을시 '.' 을 찍으면 된다.
+    # 같은경로가 아닐시 상대경로로 지정해서 실행한다.
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '4000:3000'
+    #개발용이기 때문에 코드수정이 있으면 컨테이너에서도 반영
+    volumes:
+      # src의 코드를 컨테이너와 실제 IDE와 동기화
+      - ./src:/nestjs/src
+      - ./node_modules:/nestjs/node_modules
+      - ./package.json:/nestjs/package.json
+      - ./package-lock.json:/nestjs/package-lock.json
+    # 도커가 저장할 로그를 지정한다.
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '3'
+        max-size: '10m'
